@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Composite</title>
+		<script src="assets/js/jquery.js"></script>
+		<script>
+		function timer(hr,min,sec){
+			hr=(hr)?hr:0;
+			min=(min)?min:0;
+			sec=(sec)?sec:0;
+			localStorage.total=sec+(min*60)+(hr*60*60);
+			hrl=Math.floor((localStorage.total/3600))%24
+			minl=Math.floor((localStorage.total/60))%60
+			secl=Math.floor(localStorage.total)%60;
+			$(".timer").html(d(hrl)+":"+d(minl)+":"+d(secl));
+			this.start=function(){
+				localStorage.running=true;
+			timer=setInterval(function(){
+				if(localStorage.total<=0)
+					clearInterval(timer);
+				
+				else{
+				localStorage.total--;
+				hrl=Math.floor((localStorage.total/3600))%24
+				minl=Math.floor((localStorage.total/60))%60
+				secl=Math.floor(localStorage.total)%60;
+				$(".timer").html(d(hrl)+":"+d(minl)+":"+d(secl));
+			}
+			if(localStorage.total<=60)
+				$('body').css('background','#ffffb3');
+			if(localStorage.total<=0)
+				$('body').css('background','#ff4c4c');
+				window.focus();
+
+			},1000);
+			}
+			this.pause=function(){
+				localStorage.running=false;
+				clearInterval(timer);
+			}
+			
+		}
+		function d(n){
+			return (n>9||n<-9)?n:'0'+n;
+		}
+		$(document).ready(function(){
+			window.focus();
+			if(localStorage.text)
+				$("input").val(localStorage.text);
+
+			if(localStorage.total){
+				window.T=new timer(0,0,Number(localStorage.total));
+				$("#start").removeClass("disabled");
+				$("#stop").removeClass("disabled");
+			}
+
+			$('#set').click(function(){
+				m=prompt("Enter minutes",2);
+				if(m){
+					$("#start").removeClass("disabled");
+					$("#stop").removeClass("disabled");
+					window.T=new timer(0,m,0);
+				}
+
+			});
+			$("#start").click(function(){
+				if(T){
+					T.start();
+					$("#start").addClass("disabled");
+					$("#pause").removeClass("disabled");
+				}
+				else
+					$("#set").click();
+			});
+			$("#pause").click(function(){
+				if(T){
+					T.pause();
+					$("#pause").addClass("disabled");
+					$("#start").removeClass("disabled");
+				}
+				else
+					$("#set").click();
+			});
+			$("#stop").click(function(){
+				delete localStorage.total;
+				window.location=location;
+			});
+			$("input").change(function(){
+				localStorage.text=$("input").val();
+			});
+			$("input").keyup(function(e){
+
+				localStorage.text=$("input").val();
+			});
+			$("input").keydown(function(e){
+				e.stopPropagation();
+			});
+			$("input").mouseover(function(){
+				localStorage.text=$("input").val();
+			});
+			$(window).keydown(function(e){
+
+				if(e.keyCode==32)
+					if(localStorage.running=="true")
+						$("#pause").click();
+					else
+						$("#start").click();
+			});
+		});
+		</script>
+		<style>
+			/* latin-ext */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 100;
+  src: local('Raleway Thin'), local('Raleway-Thin'), url(assets/fonts/font.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 100;
+  src: local('Raleway Thin'), local('Raleway-Thin'), url(assets/fonts/font.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+}
+
+/* fallback */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'), local('MaterialIcons-Regular'), url(assets/fonts/icons.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+			.timer{
+				font-size:10em;
+				text-align: center;
+				margin-top:50px;
+				font-family: "Raleway";
+			}
+			i{
+				cursor:pointer;
+				font-size:4em!important;
+				margin:20px;
+				color:#18a981;
+
+			}
+			.disabled{
+				color:#999;
+			} 
+			img {width:100px;}
+			input {display: block;
+				width: 100%;
+				font-size: 3em;
+				text-align:center;
+				border:0px;
+				outline:0px;
+				color:#555;
+				border-bottom:1px solid #18a981;
+				margin-top:20px;
+				font-family: "Raleway";
+				font-weight: 800;
+				background-color: transparent;}
+			
+			
+		</style>
+	</head>
+	<body>
+			<div style="text-align: center;">
+			<img src="assets/images/logo.png">
+			<div class="timer">00:00:00</div>
+			<i id="set" class="material-icons" title="Set Timer">alarm</i>
+			<i id="start"  class="material-icons disabled" title="Start">play_arrow</i>
+			<i id="pause" class="material-icons disabled" title="Pause">pause</i>
+			<i id="stop" class="material-icons disabled" title="Stop">stop</i>
+			<input type="text" placeholder="Event Name">
+			</div>
+
+	</body>
+</html>
